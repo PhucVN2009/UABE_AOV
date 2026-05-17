@@ -42,6 +42,11 @@ jobs:
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.0.6113669" >> $GITHUB_ENV
 
+      - name: Upgrade Gradle wrapper to 7.6.4
+        run: |
+          sed -i 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-7.6.4-bin.zip|' \
+            gradle/wrapper/gradle-wrapper.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
