@@ -1,0 +1,10 @@
+# Local
+local.properties
+.gradle/
+build/
+*.iml
+.idea/
+
+# Keep .so prebuilt libraries
+!**/*.a
+!**/*.so
