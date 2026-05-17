@@ -21,26 +21,25 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Setup Android SDK + NDK
+      - name: Setup Android SDK
         run: |
-          CMDLINE_TOOLS_URL="https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
-          mkdir -p $HOME/android-sdk/cmdline-tools
-          curl -fsSL $CMDLINE_TOOLS_URL -o cmdline-tools.zip
-          unzip -q cmdline-tools.zip -d $HOME/android-sdk/cmdline-tools
-          mv $HOME/android-sdk/cmdline-tools/cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+          ANDROID_SDK_ROOT=$HOME/android-sdk
+          CMDLINE_TOOLS=$ANDROID_SDK_ROOT/cmdline-tools/latest
+          SDKMANAGER=$CMDLINE_TOOLS/bin/sdkmanager
 
-          export ANDROID_SDK_ROOT=$HOME/android-sdk
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+          mkdir -p $CMDLINE_TOOLS
+          curl -fsSL "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip" -o cmdline-tools.zip
+          unzip -q cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
+          mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $CMDLINE_TOOLS
 
-          yes | sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses > /dev/null 2>&1 || true
+          yes | $SDKMANAGER --sdk_root=$ANDROID_SDK_ROOT --licenses > /dev/null 2>&1 || true
 
-          sdkmanager --sdk_root=$ANDROID_SDK_ROOT \
+          $SDKMANAGER --sdk_root=$ANDROID_SDK_ROOT \
             "platforms;android-29" \
             "build-tools;29.0.2" \
             "ndk;21.0.6113669"
 
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/21.0.6113669" >> $GITHUB_ENV
 
       - name: Grant execute permission for gradlew
